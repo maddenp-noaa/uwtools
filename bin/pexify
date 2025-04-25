@@ -2,14 +2,15 @@
 
 set -eu
 meta=$PWD/recipe/meta.json
-(cd src && set -x && python -m pip wheel --no-deps --wheel-dir build .)
+build=src/build
+(cd src && python -m pip wheel --no-deps --wheel-dir $build .)
 args=(
   --output-file uw
-  --repo src/build
+  --repo $build
   --scie eager
   --script uw
   uwtools==$(jq -r .version $meta)
   $(jq -r .packages.run[] $meta | grep -v "^python " | sed 's/  *//')
 )
-set -x
 pex ${args[*]}
+rm -rf $build
