@@ -4,14 +4,20 @@ set -eu
 test ! -d recipe && echo "Run from project root directory." && exit 1
 build=$PWD/src/build
 meta=$PWD/recipe/meta.json
+exe=bin/$(jq -r .cliname src/uwtools/resources/info.json)
+echo "Building wheel:"
 (cd src && python -m pip wheel --no-deps --wheel-dir $build .)
 args=(
-  --output-file uw
+  --output-file $exe
   --repo $build
   --scie eager
   --script uw
   uwtools==$(jq -r .version $meta)
   $(jq -r .packages.run[] $meta | grep -v "^python " | sed 's/  *//')
 )
+echo -n "Building pex: "
 pex ${args[*]}
+echo "OK"
 rm -rf $build
+set -x
+$exe --version
