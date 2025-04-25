@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 set -eu
+test ! -d recipe && echo "Run from project root directory." && exit 1
+build=$PWD/src/build
 meta=$PWD/recipe/meta.json
-build=src/build
 (cd src && python -m pip wheel --no-deps --wheel-dir $build .)
 args=(
   --output-file uw
