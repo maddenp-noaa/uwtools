@@ -28,7 +28,7 @@ env: package
 	conda create -y -n $(call spec,buildnum,-) $(CHANNELS) $(call spec,build,=)
 
 format:
-	@./format
+	@bin/format
 
 lint:
 	recipe/run_test.sh lint
