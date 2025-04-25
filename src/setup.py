@@ -20,16 +20,19 @@ from setuptools import find_packages, setup
 
 # Collect package metadata.
 
-recipe = Path(os.environ.get("RECIPE_DIR", "../recipe"))
-metasrc = recipe / "meta.json"
-meta = json.loads(metasrc.read_text())
+meta = json.loads(Path(os.environ.get("RECIPE_DIR", "../recipe"), "meta.json").read_text())
 name_conda = meta["name"]
 name_py = name_conda.replace("-", "_")
 
 # Define basic setup configuration.
 
 kwargs = {
-    "entry_points": {"console_scripts": ["uw = %s.cli:main" % name_py]},
+    "entry_points": {
+        "console_scripts": [
+            "%s = %s.cli:main"
+            % (json.loads(Path("uwtools/resources/info.json").read_text())["cliname"], name_py)
+        ]
+    },
     "include_package_data": True,
     "name": name_conda,
     "packages": find_packages(exclude=["%s.tests" % name_py], include=[name_py, "%s.*" % name_py]),

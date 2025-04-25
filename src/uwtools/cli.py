@@ -33,6 +33,7 @@ from uwtools.utils.file import get_file_format, resource_path
 
 FORMATS = FORMAT.extensions()
 LEADTIME_DESC = "hours[:minutes[:seconds]]"
+CLINAME = json.loads(resource_path("info.json").read_text())["cliname"]
 TITLE_REQ_ARG = "Required arguments"
 
 Args = dict[str, Any]
@@ -60,7 +61,7 @@ def main() -> None:
     except UWError as e:
         _abort(str(e))
     try:
-        log.debug("Command: %s %s", Path(sys.argv[0]).name, " ".join(sys.argv[1:]))
+        log.debug("Command: %s %s", CLINAME, " ".join(sys.argv[1:]))
         tools: dict[str, Callable[..., bool]] = {
             STR.config: _dispatch_config,
             STR.execute: _dispatch_execute,
@@ -1061,7 +1062,7 @@ def _basic_setup(parser: Parser) -> Group:
         _switch(STR.version),
         action=STR.version,
         help="Show version info and exit",
-        version=f"{Path(sys.argv[0]).name} {_version()}",
+        version=f"{CLINAME} {_version()}",
     )
     return optional
 
