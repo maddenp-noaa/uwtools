@@ -30,6 +30,7 @@ test:
     - jq 1.7.*
     - make 4.4.*
     - mypy 1.15.*
+    - pex 2.24.*
     - pytest 8.3.*
     - pytest-cov 6.0.*
     - pytest-xdist 3.6.*
