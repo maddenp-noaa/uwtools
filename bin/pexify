@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+meta=$PWD/recipe/meta.json
+(cd src && python -m pip wheel --no-deps --wheel-dir .. .)
+args=(
+  --output-file uw
+  --repo .
+  --scie eager
+  --script uw
+  uwtools==$(jq -r .version $meta)
+  $(jq -r .packages.run[] $meta | grep -v "^python " | sed 's/  *//')
+)
+pex ${args[*]}
