@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
+set -eu
 meta=$PWD/recipe/meta.json
-(cd src && python -m pip wheel --no-deps --wheel-dir build .)
+(cd src && set -x && python -m pip wheel --no-deps --wheel-dir build .)
 args=(
   --output-file uw
   --repo src/build
@@ -10,4 +11,5 @@ args=(
   uwtools==$(jq -r .version $meta)
   $(jq -r .packages.run[] $meta | grep -v "^python " | sed 's/  *//')
 )
+set -x
 pex ${args[*]}
