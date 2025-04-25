@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 meta=$PWD/recipe/meta.json
-(cd src && python -m pip wheel --no-deps --wheel-dir .. .)
+(cd src && python -m pip wheel --no-deps --wheel-dir build .)
 args=(
   --output-file uw
-  --repo .
+  --repo src/build
   --scie eager
   --script uw
   uwtools==$(jq -r .version $meta)
