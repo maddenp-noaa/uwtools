@@ -2,7 +2,7 @@
 A driver for the MPAS Init component.
 """
 
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from iotaa import asset, task, tasks
@@ -52,13 +52,13 @@ class MPASInit(MPASBase):
         yield asset(path, path.is_file)
         base_file = self.config[STR.namelist].get(STR.basefile)
         yield file(Path(base_file)) if base_file else None
-        stop_time = self._cycle + timedelta(hours=self.config["boundary_conditions"]["length"])
+        initial_ts, final_ts = self._initial_and_final_ts
         namelist = self.config[STR.namelist]
         update_values = namelist.get(STR.updatevalues, {})
         update_values.setdefault("nhyd_model", {}).update(
             {
-                "config_start_time": self._cycle.strftime("%Y-%m-%d_%H:00:00"),
-                "config_stop_time": stop_time.strftime("%Y-%m-%d_%H:00:00"),
+                "config_start_time": initial_ts.strftime("%Y-%m-%d_%H:00:00"),
+                "config_stop_time": final_ts.strftime("%Y-%m-%d_%H:00:00"),
             }
         )
         namelist[STR.updatevalues] = update_values
@@ -94,6 +94,12 @@ class MPASInit(MPASBase):
         return STR.mpasinit
 
     # Private helper methods
+
+    @property
+    def _initial_and_final_ts(self) -> tuple[datetime, datetime]:
+        initial = self._cycle.replace(tzinfo=timezone.utc)
+        final = initial + timedelta(hours=self.config["boundary_conditions"]["length"])
+        return initial, final
 
     @property
     def _streams_fn(self) -> str:
